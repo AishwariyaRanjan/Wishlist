@@ -7,9 +7,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class WishlistAdapter(private val wishes: List<Wish>) : RecyclerView.Adapter<WishlistAdapter.ViewHolder>() {
+    private lateinit var mListener : onItemClickListener
+    interface onItemClickListener{
+        fun onItemClick(position: Int)
+    }
+
+    fun setOnItemClickListener(listener: onItemClickListener){
+        mListener = listener
+    }
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, listener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
 
         // TODO: Create member variables for any view that will be set
         // as you render a row.
@@ -25,6 +33,10 @@ class WishlistAdapter(private val wishes: List<Wish>) : RecyclerView.Adapter<Wis
             itemTv = itemView.findViewById(R.id.itemTv)
             storeTv = itemView.findViewById(R.id.storeTv)
             priceTv = itemView.findViewById(R.id.priceTv)
+
+            itemView.setOnClickListener{
+                listener.onItemClick(adapterPosition)
+            }
         }
     }
     //Implement onCreateViewHolder by inflating our custom item layout wish_item.xml
@@ -34,7 +46,7 @@ class WishlistAdapter(private val wishes: List<Wish>) : RecyclerView.Adapter<Wis
         //Inflate the custom layout
         val contactView = inflater.inflate(R.layout.wish_item,parent,false)
         //Return a new holder instance
-        return ViewHolder(contactView)
+        return ViewHolder(contactView, mListener)
     }
     //Implement onBindViewHolder by populating the data of a wish into the view holder:
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -43,6 +55,8 @@ class WishlistAdapter(private val wishes: List<Wish>) : RecyclerView.Adapter<Wis
         holder.itemTv.text = wish.item
         holder.storeTv.text = wish.store
         holder.priceTv.text = wish.price
+
+
     }
     //Implement getItemCount() by returning the number of wishes in the list of wishes
     override fun getItemCount(): Int {
